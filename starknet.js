@@ -103,7 +103,7 @@ export async function sendTokens(privateKey, toTarget, amount, tokenSymbol, stor
     toAddress = recipient.address;
   }
 
-  const wallet = await getWalletInstance(privateKey, "if_needed");
+  const wallet = await getWalletInstance(privateKey, "never");
   const token = tokenSymbol.toUpperCase() === "USDT" ? sepoliaTokens.USDT : sepoliaTokens.STRK;
   const tx = await wallet.transfer(token, [
     { to: fromAddress(toAddress), amount: Amount.parse(amount, token) },
