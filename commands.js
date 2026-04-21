@@ -2,7 +2,7 @@ import { createWallet, getBalances, sendTokens } from "./wallet.js";
 import { getWallet, saveWallet, getSession, saveSession, clearSession } from "./store.js";
 import { encryptKey, decryptKey } from "./crypto.js";
 
-const MENU = `👋 *Welcome to StarkZap!*
+const MENU = `👋 *Welcome to PingPay!*
 _Your Starknet wallet on WhatsApp_ 🚀
 
 Choose an option:
@@ -54,8 +54,7 @@ export async function handleCommand(phone, text) {
         const { strk, usdt } = await getBalances(w.address);
         return (
           `💰 *Your Balances*\n\n` +
-          `⚡ STRK: ${strk}\n` +
-          `💵 USDT: ${usdt}\n\n` +
+          `⚡ STRK: ${strk}\n\n` +
           `📬 *Address:*\n${w.address}\n\n` +
           `Type *0* for menu.`
         );
@@ -82,7 +81,7 @@ export async function handleCommand(phone, text) {
           `📥 *Receive Tokens*\n\n` +
           `Your deposit address:\n\n` +
           `\`${w.address}\`\n\n` +
-          `Share this with anyone to receive STRK or USDT.\n\n` +
+          `Share this with anyone to receive STRK.\n\n` +
           `💧 Get free test STRK:\n👉 https://starknet-faucet.vercel.app\n\n` +
           `Type *0* for menu.`
         );
@@ -102,11 +101,11 @@ export async function handleCommand(phone, text) {
 
       if (input === "6") {
         return (
-          `ℹ️ *About StarkZap Bot*\n\n` +
+          `ℹ️ *About PingPay Bot*\n\n` +
           `A self-custodied Starknet wallet in WhatsApp.\n\n` +
           `*Features:*\n` +
           `• Create wallet instantly\n` +
-          `• Send STRK & USDT by phone number\n` +
+          `• Send STRK by phone number\n` +
           `• Receive tokens from anyone\n` +
           `• Export key to Ready anytime\n\n` +
           `🌐 Network: Starknet Sepolia Testnet\n` +
@@ -158,8 +157,7 @@ export async function handleCommand(phone, text) {
         `💸 Sending to: *${input}*\n\n` +
         `Enter *amount and token*:\n\n` +
         `Examples:\n` +
-        `• 5 STRK\n` +
-        `• 10 USDT\n\n` +
+        `• 5 STRK\n\n` +
         `_(Type *0* to cancel)_`
       );
     }
@@ -167,7 +165,7 @@ export async function handleCommand(phone, text) {
     if (step === "send_amount") {
       const parts = input.split(" ");
       if (parts.length < 2 || !["STRK", "USDT"].includes(parts[1].toUpperCase())) {
-        return `❌ Invalid format.\n\nEnter like: *5 STRK* or *10 USDT*`;
+        return `❌ Invalid format.\n\nEnter like: *5 STRK*`;
       }
       saveSession(phone, {
         step: "send_pin",
