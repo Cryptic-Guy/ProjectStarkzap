@@ -131,4 +131,6 @@ app.post("/voice/process-tx", async (req, res) => {
 // 🚀 SERVER START
 // ==========================================
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 StarkZap Unified Node running on port ${PORT}`));
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 StarkZap Unified Node running on port ${PORT}`);
+});
