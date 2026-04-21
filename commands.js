@@ -195,7 +195,7 @@ export async function handleCommand(phone, text) {
         `✅ *Sent Successfully!*\n\n` +
         `💸 ${amount} ${token} → ${target}\n\n` +
         `🔗 *Tx Hash:*\n${txHash}\n\n` +
-        `🔍 View on explorer:\nhttps://sepolia.voyager.online//tx/${txHash}\n\n` +
+        `🔍 View on explorer:\nhttps://sepolia.voyager.online/tx/${txHash}\n\n` +
         `Type *0* for menu.`
       );
     }
