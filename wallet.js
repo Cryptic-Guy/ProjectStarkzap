@@ -22,7 +22,6 @@ function getRPC() {
 }
 
 function getProvider() {
-  // Correctly passes nodeUrl as an object for Starknet v6+
   return new RpcProvider({ nodeUrl: getRPC() });
 }
 
@@ -31,9 +30,15 @@ function getSDK() {
 }
 
 export async function createWallet() {
-  // Generates a cryptographically secure 32-byte private key
-  // This converts the Array of numbers into a single Hex string that Starknet understands
-  const privateKey = "0x" + Buffer.from(ec.starkCurve.utils.randomPrivateKey()).toString('hex');
+  // ✅ FIX: Use `ec.starkCurve` directly (imported from starknet), not `stark.ec.starkCurve`
+  // In starknet.js v6+, `stark.ec` no longer exists — `ec` is a top-level named export
+  const rawKey = ec.starkCurve.utils.randomPrivateKey();
+  const privateKey =
+    "0x" +
+    Array.from(rawKey)
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+
   const sdk = getSDK();
   const { wallet } = await sdk.onboard({
     strategy: OnboardStrategy.Signer,
@@ -60,7 +65,10 @@ export async function getBalances(address) {
       const divisor = BigInt(10 ** token.decimals);
       const whole = raw / divisor;
       const fraction = raw % divisor;
-      const formatted = `${whole}.${fraction.toString().padStart(token.decimals, "0").slice(0, 4)}`;
+      const formatted = `${whole}.${fraction
+        .toString()
+        .padStart(token.decimals, "0")
+        .slice(0, 4)}`;
       return `${formatted} ${token.symbol}`;
     } catch (e) {
       return `0.0000 ${token.symbol}`;
@@ -100,7 +108,6 @@ export async function sendTokens(privateKey, toTarget, amount, tokenSymbol, stor
   console.log("💳 Sending from:", wallet.address);
 
   // 3. Ensure Wallet is Deployed
-  // Note: Requires minimal STRK balance for the first-ever transaction
   await wallet.ensureReady({ deploy: "if_needed" });
 
   // 4. Prepare Amount
@@ -118,7 +125,7 @@ export async function sendTokens(privateKey, toTarget, amount, tokenSymbol, stor
       }),
     });
 
-    // 6. Get Hash (StarkZap uses result.hash)
+    // 6. Get Hash
     const txHash = result.hash || result.transaction_hash || result.transactionHash;
 
     if (!txHash) {
@@ -132,7 +139,6 @@ export async function sendTokens(privateKey, toTarget, amount, tokenSymbol, stor
     await provider.waitForTransaction(txHash);
 
     return txHash;
-
   } catch (error) {
     console.error("Execution failed:", error.message);
     throw error;
